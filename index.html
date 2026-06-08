@@ -6,121 +6,218 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Hitesh Kumar Gupta</title>
   <meta name="description"
-    content="Hitesh Kumar Gupta — researcher in NLP and information retrieval; R&D Intern at IIT Kharagpur; coordinator of the FIRE 2026 cryptocurrency information retrieval shared task.">
+    content="Hitesh Kumar Gupta. R&D Intern at IIT Kharagpur, coordinating the FIRE 2026 cryptocurrency information retrieval shared task.">
   <style>
     :root {
-      --ink: #1a1a1a;
-      --muted: #666;
-      --link: #0b5fff;
-      --rule: #e6e6e6;
+      --ink: #1b1b1f;
+      --muted: #6b6b73;
+      --faint: #9b9ba3;
+      --accent: #0b5cc4;
+      --rule: #e8e8ec;
     }
 
     * {
-      box-sizing: border-box
+      box-sizing: border-box;
+    }
+
+    html {
+      -webkit-text-size-adjust: 100%;
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
       color: var(--ink);
-      line-height: 1.6;
-      max-width: 730px;
-      margin: 48px auto;
-      padding: 0 22px;
+      line-height: 1.65;
+      max-width: 720px;
+      margin: 60px auto;
+      padding: 0 24px;
       font-size: 17px;
       -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
     }
 
     a {
-      color: var(--link);
-      text-decoration: none
+      color: var(--accent);
+      text-decoration: none;
     }
 
     a:hover {
-      text-decoration: underline
+      text-decoration: underline;
+      text-underline-offset: 2px;
     }
 
     header {
       display: flex;
-      gap: 26px;
-      align-items: flex-start;
-      margin-bottom: 6px
+      gap: 28px;
+      align-items: center;
+      margin-bottom: 30px;
     }
 
     .photo {
-      width: 118px;
-      height: 118px;
-      border-radius: 8px;
+      width: 116px;
+      height: 116px;
+      border-radius: 10px;
       object-fit: cover;
-      background: #f0f0f0;
-      flex: none
+      background: #f1f1f4;
+      border: 1px solid var(--rule);
+      flex: none;
     }
 
     h1 {
-      font-size: 28px;
-      margin: 0 0 2px
+      font-family: Georgia, "Iowan Old Style", "Palatino Linotype", Palatino, serif;
+      font-size: 31px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      margin: 0 0 5px;
     }
 
-    .role {
+    .affil {
       color: var(--muted);
-      margin: 0 0 8px
+      font-size: 16px;
+      line-height: 1.45;
+      margin: 0 0 11px;
     }
 
     .contact {
       font-size: 15px;
-      color: var(--muted)
+      color: var(--faint);
     }
 
     .contact a {
-      color: var(--muted)
+      color: var(--muted);
     }
 
     .contact a:hover {
-      color: var(--link)
+      color: var(--accent);
+    }
+
+    .sep {
+      color: var(--rule);
+      margin: 0 8px;
+    }
+
+    section {
+      margin-bottom: 4px;
     }
 
     h2 {
-      font-size: 14px;
+      font-size: 12.5px;
+      font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: .07em;
-      color: var(--muted);
+      letter-spacing: 0.09em;
+      color: var(--faint);
       border-bottom: 1px solid var(--rule);
-      padding-bottom: 6px;
-      margin: 32px 0 13px
+      padding-bottom: 7px;
+      margin: 34px 0 14px;
     }
 
     p {
-      margin: 0 0 14px
+      margin: 0 0 14px;
+    }
+
+    .lead p:first-child {
+      margin-top: 0;
     }
 
     ul {
-      padding-left: 20px;
-      margin: 0 0 14px
+      padding-left: 19px;
+      margin: 0 0 14px;
     }
 
     li {
-      margin-bottom: 9px
+      margin-bottom: 8px;
     }
 
-    .date {
-      color: var(--muted);
-      font-variant-numeric: tabular-nums
+    li::marker {
+      color: #c7c7cf;
     }
 
-    .where {
-      color: var(--muted);
-      font-size: 15px
+    .inline {
+      color: var(--ink);
+    }
+
+    .news li {
+      color: var(--ink);
+    }
+
+    .news .date {
+      color: var(--faint);
+      font-variant-numeric: tabular-nums;
+      margin-right: 10px;
     }
 
     .pub .title {
-      font-weight: 600
+      font-weight: 600;
+    }
+
+    .pub .meta {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .exp {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .exp>li {
+      margin-bottom: 17px;
+    }
+
+    .exp .head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: baseline;
+    }
+
+    .exp .date {
+      color: var(--muted);
+      font-size: 14px;
+      white-space: nowrap;
+      flex: none;
+    }
+
+    .exp .where {
+      color: var(--muted);
+      font-size: 15px;
+      margin-top: 1px;
+    }
+
+    .exp .desc {
+      margin: 5px 0 0;
     }
 
     footer {
-      margin-top: 42px;
-      color: #aaa;
+      margin-top: 46px;
+      color: var(--faint);
       font-size: 13px;
       border-top: 1px solid var(--rule);
-      padding-top: 14px
+      padding-top: 16px;
+    }
+
+    @media (max-width: 540px) {
+      body {
+        margin: 40px auto;
+      }
+
+      header {
+        gap: 20px;
+      }
+
+      .photo {
+        width: 92px;
+        height: 92px;
+      }
+
+      h1 {
+        font-size: 27px;
+      }
+
+      .exp .head {
+        flex-direction: column;
+        gap: 0;
+      }
     }
   </style>
 </head>
@@ -128,93 +225,97 @@
 <body>
 
   <header>
-    <!-- Optional: add a square headshot named photo.jpg in this folder; it auto-hides if absent. -->
     <img class="photo" src="photo.png" alt="Hitesh Kumar Gupta" onerror="this.style.display='none'">
     <div>
       <h1>Hitesh Kumar Gupta</h1>
-      <p class="role">Researcher — Natural Language Processing &amp; Information Retrieval<br>
-        R&amp;D Intern, Indian Institute of Technology Kharagpur</p>
+      <p class="affil">R&amp;D Intern, Department of Artificial Intelligence<br>
+        Indian Institute of Technology Kharagpur</p>
       <p class="contact">
-        <a href="mailto:hiteshagarwal172@gmail.com">Email</a> &nbsp;·&nbsp;
-        <a href="https://github.com/ihiteshagrawal">GitHub</a> &nbsp;·&nbsp;
-        <a href="https://linkedin.com/in/ihiteshagrawal">LinkedIn</a> &nbsp;·&nbsp;
+        <a href="mailto:hiteshagarwal172@gmail.com">Email</a><span class="sep">·</span>
+        <a href="https://github.com/ihiteshagrawal">GitHub</a><span class="sep">·</span>
+        <a href="https://linkedin.com/in/ihiteshagrawal">LinkedIn</a><span class="sep">·</span>
         <a href="cv.pdf">CV</a>
       </p>
     </div>
   </header>
 
-  <section>
+  <section class="lead">
     <p>
-      I am currently an R&amp;D Intern in the <b>Department of Artificial Intelligence</b> at the Indian Institute of
-      Technology Kharagpur, under <b>Prof. Koustav Rudra</b>. My current work builds the QA
-      and multiple-choice dataset from cryptocurrency YouTube video transcripts, and I coordinate
-      the <b>FIRE 2026 shared task on cryptocurrency information retrieval</b> (IIT Kharagpur).
+      I am an R&amp;D Intern in the Department of Artificial Intelligence at the Indian Institute of
+      Technology Kharagpur, working with <b>Prof. Koustav Rudra</b>. My current work builds a
+      question-answering and multiple-choice dataset from cryptocurrency YouTube video transcripts,
+      and I coordinate the <b>FIRE 2026 shared task on cryptocurrency information retrieval</b>.
     </p>
     <p>
-      I am largely self-taught. I started programming on a smartphone at 13 &mdash; building
-      chatbots for companies while in school &mdash; shipped a full-stack application from my phone
-      at 17, and independently published my first research paper at 20 (now cited across IEEE, IOP
-      Science, and NCIT venues). An engineer moving into full-time research, I am drawn to hard
-      problems in AI diagnostics, distributed systems, and software that holds up in production.
-      I am a third-year B.Tech (Computer Science) student, <b>open to research opportunities</b>.
+      I am largely self-taught. I started programming on a smartphone at 13, building chatbots for
+      companies while in school, shipped a full-stack application from my phone at 17, and
+      independently published my first research paper at 20, now cited across IEEE, IOP Science, and
+      NCIT venues.
+    </p>
+    <p>
+      I am a third-year
+      B.Tech (Computer Science) student, <b>open to research opportunities.</b>
     </p>
   </section>
 
   <section>
     <h2>Research Interests</h2>
-    <p>Responsible AI &middot; machine unlearning &amp; AI safety &middot; computer vision &middot;
-      natural language processing &middot; question answering &amp; information retrieval &middot;
-      synthetic dataset construction and evaluation.</p>
+    <p>Responsible AI &nbsp;·&nbsp; machine unlearning in AI safety &nbsp;·&nbsp; computer vision
+      &nbsp;·&nbsp; natural language processing.</p>
   </section>
 
-  <section>
+  <section class="news">
     <h2>News</h2>
     <ul>
-      <li><span class="date">2026</span> &nbsp;Coordinating the <b>FIRE 2026 shared task on
-          cryptocurrency information retrieval</b> (IIT Kharagpur).</li>
-      <li><span class="date">2026</span> &nbsp;Building a large QA &amp; MCQ dataset from
-        cryptocurrency YouTube transcripts — the first of its kind.</li>
-      <li><span class="date">2025</span> &nbsp;Paper on the information bottleneck in
-        CNN&ndash;LSTM image-captioning models published in <i>IJCA</i>; arXiv-endorsed
-        (cs.CV, cs.LG).</li>
+      <li><span class="date">2026</span>Coordinating the FIRE 2026 shared task on cryptocurrency
+        information retrieval at IIT Kharagpur.</li>
+      <li><span class="date">2026</span>Building a question-answering and multiple-choice dataset
+        from cryptocurrency YouTube video transcripts.</li>
+      <li><span class="date">2025</span>First research paper, on the information bottleneck in
+        CNN-LSTM image-captioning models, published in <i>IJCA</i>.</li>
     </ul>
   </section>
 
   <section class="pub">
     <h2>Publications</h2>
     <p>
-      <span class="title">When Better Eyes Lead to Blindness: A Diagnostic Study of the
-        Information Bottleneck in CNN&ndash;LSTM Image Captioning Models.</span><br>
+      <span class="title">When Better Eyes Lead to Blindness: A Diagnostic Study of the Information
+        Bottleneck in CNN-LSTM Image Captioning Models.</span><br>
       Hitesh Kumar Gupta. <i>International Journal of Computer Applications</i>, 2025.
-      &nbsp;<a href="https://doi.org/10.5120/ijca2025925560">doi:10.5120/ijca2025925560</a><br>
-      <span class="where">Cited 3&times; (IEEE-published research, IOP Science, NCIT Journal) &middot;
-        arXiv-endorsed (cs.CV, cs.LG).</span>
+      <a href="https://doi.org/10.5120/ijca2025925560">doi:10.5120/ijca2025925560</a><br>
+      <span class="meta">Cited 3 times (IEEE-published research, IOP Science, NCIT Journal).</span>
     </p>
   </section>
 
   <section>
     <h2>Experience</h2>
-    <ul>
-      <li><b>R&amp;D Intern</b>, IIT Kharagpur
-        <span class="where">&mdash; Dept. of Artificial Intelligence, under Prof. Koustav Rudra</span>
-        <span class="date">(May 2026 &ndash; present)</span>.
-        End-to-end NLP pipeline for crypto-video QA generation: transcript cleaning, semantic
-        chunking, LLM-based generation (Qwen2.5-14B via vLLM on H100), multi-gate quality
-        filtering, deduplication, and leakage-safe video-level splits.
+    <ul class="exp">
+      <li>
+        <div class="head"><span><b>R&amp;D Intern</b>, IIT Kharagpur</span><span class="date">May 2026 &ndash;
+            present</span></div>
+        <div class="where">Department of Artificial Intelligence, with Prof. Koustav Rudra</div>
+        <p class="desc">End-to-end NLP pipeline for crypto-video QA generation: transcript cleaning,
+          semantic chunking, LLM-based generation (Qwen2.5-14B via vLLM on H100), multi-gate quality
+          filtering, deduplication, and leakage-safe video-level splits.</p>
       </li>
-      <li><b>R&amp;D Project Intern</b>, IIT (ISM) Dhanbad
-        <span class="where">&mdash; Dept. of CSE, under Prof. Sachin Tripathi</span>
-        <span class="date">(Feb &ndash; Apr 2026)</span>.
-        Blockchain-assisted mutual authentication for fog-based healthcare on Hyperledger Fabric.
+      <li>
+        <div class="head"><span><b>R&amp;D Project Intern</b>, IIT (ISM) Dhanbad</span><span class="date">Feb &ndash;
+            Apr 2026</span></div>
+        <div class="where">Department of CSE, with Prof. Sachin Tripathi</div>
+        <p class="desc">Blockchain-assisted mutual authentication for fog-based healthcare on
+          Hyperledger Fabric.</p>
       </li>
-      <li><b>Deep Learning Intern</b>, Birsa Institute of Technology, Sindri
-        <span class="date">(Jun &ndash; Jul 2025)</span>.
-        Production deep-learning pipelines for image processing; led a team of four.
+      <li>
+        <div class="head"><span><b>Deep Learning Intern</b>, Birsa Institute of Technology, Sindri</span><span
+            class="date">Jun &ndash; Jul 2025</span></div>
+        <p class="desc">Production deep-learning pipelines for image processing; led a team of four.</p>
       </li>
-      <li><b>Software Engineer</b> (part-time), VaporFi Labs
-        <span class="where">&mdash; US-based fintech / Web3</span>
-        <span class="date">(2022 &ndash; 2026)</span>.
-        DEX aggregation, on-chain data pipelines, and smart-contract systems in production.
+      <li>
+        <div class="head"><span><b>Software Engineer</b> (part-time), VaporFi Labs</span><span class="date">2022 &ndash;
+            2026</span></div>
+        <div class="where">US-based fintech and Web3</div>
+        <p class="desc">DEX aggregation, on-chain data pipelines, and smart-contract systems in
+          production.</p>
       </li>
     </ul>
   </section>
@@ -222,20 +323,20 @@
   <section>
     <h2>Education</h2>
     <p>B.Tech in Computer Science &amp; Engineering, K. K. College of Engineering &amp; Management,
-      Dhanbad &nbsp;<span class="date">(expected 2027)</span>. CGPA 8.5/10 &mdash; first rank in programme.</p>
+      Dhanbad. CGPA 8.5/10, first rank in programme. Expected 2027.</p>
   </section>
 
   <section>
     <h2>Awards &amp; Service</h2>
     <ul>
       <li>Track Coordinator, FIRE 2026 cryptocurrency information retrieval shared task.</li>
-      <li>arXiv Endorsement (cs.CV, cs.LG) &mdash; obtained independently, without institutional affiliation.</li>
-      <li>First Rank, Computer Science &amp; Engineering programme &middot; Hindustan Talent Honour, 2023.</li>
+      <li>arXiv Endorsement (cs.CV, cs.LG), obtained independently without institutional affiliation.</li>
+      <li>Hindustan Talent Honour, 2023.</li>
     </ul>
   </section>
 
   <footer>
-    Built with plain HTML, hosted on GitHub Pages.
+    &copy; 2026 Hitesh Kumar Gupta
   </footer>
 
 </body>
