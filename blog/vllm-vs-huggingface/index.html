@@ -19,13 +19,15 @@
   <meta property="og:description"
     content="Why HuggingFace .generate() was going to take a day for ~100k generations, why vLLM cut it to hours, and the gotchas nobody warns you about.">
   <meta property="og:url" content="https://hiteshkrgupta.github.io/blog/vllm-vs-huggingface/">
+  <meta property="og:image" content="https://hiteshkrgupta.github.io/blog/vllm-vs-huggingface/throughput.png">
   <meta property="article:published_time" content="2026-06-10">
   <meta property="article:author" content="Hitesh Kumar Gupta">
-  <meta name="twitter:card" content="summary">
+  <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@iHiteshAgrawal">
   <meta name="twitter:title" content="Escaping the KV-Cache Bottleneck: vLLM vs HuggingFace on an H100">
   <meta name="twitter:description"
     content="Going from a day of inference to a few hours, and the gotchas in between.">
+  <meta name="twitter:image" content="https://hiteshkrgupta.github.io/blog/vllm-vs-huggingface/throughput.png">
 
   <script type="application/ld+json">
   {
@@ -33,6 +35,7 @@
     "@type": "BlogPosting",
     "headline": "Escaping the KV-Cache Bottleneck: vLLM vs HuggingFace Transformers on an H100",
     "description": "Running ~100k LLM generations on a shared H100: why HuggingFace .generate() was slow, why vLLM was an order of magnitude faster, and the non-obvious gotchas in between.",
+    "image": "https://hiteshkrgupta.github.io/blog/vllm-vs-huggingface/throughput.png",
     "datePublished": "2026-06-10",
     "author": {
       "@type": "Person",
@@ -250,6 +253,13 @@ os.environ.<span class="tok-fn">setdefault</span>(<span class="tok-str">"VLLM_US
     </p>
 
     <h2>Takeaways</h2>
+    <p>
+      None of this means HuggingFace Transformers is the wrong tool. It's excellent where I started:
+      experimenting, prototyping, poking at one model interactively, and the wide ecosystem of
+      architectures and utilities around it. The moment the job turns into "run this same model over
+      a large batch as fast as possible," though, you've crossed from prototyping into production,
+      and that's vLLM's home turf. Use each where it's strong.
+    </p>
     <ul>
       <li>
         For any batch/offline generation past a few thousand items, reach for vLLM (or another
