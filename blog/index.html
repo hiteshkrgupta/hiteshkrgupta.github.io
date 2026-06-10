@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Blog · Hitesh Kumar Gupta</title>
+  <meta name="description"
+    content="Notes by Hitesh Kumar Gupta on LLM inference, NLP engineering, and machine learning systems.">
+  <meta name="author" content="Hitesh Kumar Gupta">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://hiteshkrgupta.github.io/blog/">
+  <link rel="icon"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230b5cc4'/%3E%3Ctext x='50' y='71' font-family='Georgia,serif' font-size='62' fill='white' text-anchor='middle'%3EH%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Blog · Hitesh Kumar Gupta">
+  <meta property="og:description" content="Notes on LLM inference, NLP engineering, and ML systems.">
+  <meta property="og:url" content="https://hiteshkrgupta.github.io/blog/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:site" content="@iHiteshAgrawal">
+</head>
+
+<body>
+
+  <div class="topbar">
+    <a class="home" href="/" target="_self">Hitesh Kumar Gupta</a>
+    <nav>
+      <a href="/blog/" target="_self">Blog</a>
+      <a href="/" target="_self">About</a>
+    </nav>
+  </div>
+
+  <h1>Blog</h1>
+  <p class="lede">
+    Engineering notes on LLM inference, NLP pipelines, and the machine-learning systems I build.
+  </p>
+
+  <ul class="post-list">
+    <li>
+      <a class="title" href="/blog/vllm-vs-huggingface/" target="_self">Escaping the KV-Cache Bottleneck: vLLM vs HuggingFace Transformers on an H100</a>
+      <div class="date">10 June 2026</div>
+      <div class="summary">
+        Running ~100k LLM generations on a shared H100: why HuggingFace <code>.generate()</code> was
+        going to take a day, why vLLM cut it to hours, and the non-obvious gotchas (CUDA-13
+        FlashInfer, the <code>gpu_memory_utilization</code> trap, prefill- vs decode-bound) that
+        nobody warns you about.
+      </div>
+    </li>
+  </ul>
+
+  <footer>
+    &copy; 2026 Hitesh Kumar Gupta · <a href="/" target="_self">Home</a>
+  </footer>
+
+</body>
+
+</html>

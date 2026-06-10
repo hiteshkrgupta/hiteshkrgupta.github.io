@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Escaping the KV-Cache Bottleneck: vLLM vs HuggingFace Transformers on an H100 · Hitesh Kumar Gupta</title>
+  <meta name="description"
+    content="Running ~100k LLM generations on a shared H100: why HuggingFace .generate() was going to take a day, why vLLM cut it to hours, and the non-obvious gotchas (CUDA-13 FlashInfer, gpu_memory_utilization, prefill- vs decode-bound) nobody warns you about.">
+  <meta name="author" content="Hitesh Kumar Gupta">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://hiteshkrgupta.github.io/blog/vllm-vs-huggingface/">
+  <link rel="icon"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230b5cc4'/%3E%3Ctext x='50' y='71' font-family='Georgia,serif' font-size='62' fill='white' text-anchor='middle'%3EH%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="../style.css">
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Escaping the KV-Cache Bottleneck: vLLM vs HuggingFace Transformers on an H100">
+  <meta property="og:description"
+    content="Why HuggingFace .generate() was going to take a day for ~100k generations, why vLLM cut it to hours, and the gotchas nobody warns you about.">
+  <meta property="og:url" content="https://hiteshkrgupta.github.io/blog/vllm-vs-huggingface/">
+  <meta property="article:published_time" content="2026-06-10">
+  <meta property="article:author" content="Hitesh Kumar Gupta">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:site" content="@iHiteshAgrawal">
+  <meta name="twitter:title" content="Escaping the KV-Cache Bottleneck: vLLM vs HuggingFace on an H100">
+  <meta name="twitter:description"
+    content="Going from a day of inference to a few hours, and the gotchas in between.">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "Escaping the KV-Cache Bottleneck: vLLM vs HuggingFace Transformers on an H100",
+    "description": "Running ~100k LLM generations on a shared H100: why HuggingFace .generate() was slow, why vLLM was an order of magnitude faster, and the non-obvious gotchas in between.",
+    "datePublished": "2026-06-10",
+    "author": {
+      "@type": "Person",
+      "name": "Hitesh Kumar Gupta",
+      "url": "https://hiteshkrgupta.github.io/"
+    },
+    "mainEntityOfPage": "https://hiteshkrgupta.github.io/blog/vllm-vs-huggingface/",
+    "keywords": ["vLLM", "HuggingFace Transformers", "PagedAttention", "KV cache", "LLM inference", "H100", "throughput", "continuous batching"]
+  }
+  </script>
+</head>
+
+<body>
+
+  <div class="topbar">
+    <a class="home" href="/" target="_self">Hitesh Kumar Gupta</a>
+    <nav>
+      <a href="/blog/" target="_self">Blog</a>
+      <a href="/" target="_self">About</a>
+    </nav>
+  </div>
+
+  <article>
+    <h1>Escaping the KV-Cache Bottleneck: vLLM vs HuggingFace Transformers on an H100</h1>
+    <p class="byline">10 June 2026 · ~9 min read</p>
+
+    <p class="lede">
+      I needed roughly a hundred thousand LLM generations for a dataset project. On HuggingFace
+      <code>.generate()</code> that was going to take more than a day. On vLLM it took a few hours
+      on the same GPU. This is what changed, and the handful of non-obvious things that almost
+      stopped it from working at all.
+    </p>
+
+    <p>
+      Most "vLLM is faster" posts stop at the headline. The headline is true and boring: vLLM is
+      faster, and everyone knows it. What I found useful, and what cost me an afternoon each to figure
+      out, were the parts <em>after</em> you decide to use it: a CUDA version that silently breaks
+      the sampler, a memory flag that means the opposite of what you'd guess on a shared machine,
+      and a workload that turned out to be bound by the part of inference I wasn't even watching.
+      Those are the parts worth writing down.
+    </p>
+
+    <h2>The setup</h2>
+    <p>
+      I was generating a synthetic question-answering dataset during a research internship: long
+      spoken-video transcripts in, structured Q/A and multiple-choice items out. Concretely:
+    </p>
+    <ul>
+      <li>Generator: <strong>Qwen2.5-14B-Instruct</strong>, bf16, on a single <strong>H100 (90&nbsp;GB)</strong>.</li>
+      <li>A second pass with a <strong>27B judge</strong> from a different model family for quality checking.</li>
+      <li>Order of <strong>~10<sup>5</sup> generations</strong> across tens of thousands of input chunks.</li>
+      <li>The H100 was <strong>shared</strong> with several other researchers, so I never had all 90&nbsp;GB to myself.</li>
+    </ul>
+    <p>
+      My first version was the obvious one: load the model with <code>transformers</code>, loop over
+      inputs, call <code>model.generate()</code> on small batches. It worked on ten examples. Scaled
+      to the full set, the ETA was north of 24 hours, and that's before the judging pass. That is
+      the wall this post is about.
+    </p>
+
+    <h2>Why <code>.generate()</code> hits a wall</h2>
+    <p>
+      The naive loop wastes the GPU in two compounding ways, and both come back to the <strong>KV
+      cache</strong>, the per-token key/value tensors a transformer keeps so it doesn't recompute
+      attention over the whole sequence at every step.
+    </p>
+    <p>
+      <strong>Static batching.</strong> A standard batched <code>generate()</code> call runs until
+      the <em>last</em> sequence in the batch finishes. If you batch 16 prompts and 15 produce a
+      10-token answer while one produces 500 tokens, those 15 slots sit idle, padded and burning
+      cycles, until the straggler is done. Real generation lengths are wildly uneven, so a lot of
+      the batch is dead weight a lot of the time.
+    </p>
+    <p>
+      <strong>Fragmented KV memory.</strong> Classic implementations reserve a contiguous KV block
+      sized to the <em>maximum</em> possible sequence length for every request, then never use most
+      of it. The vLLM authors measured 60–80% of that memory going to waste through fragmentation
+      and over-reservation
+      (<a href="https://arxiv.org/abs/2309.06180" target="_blank">Kwon et al., SOSP 2023</a>).
+      Wasted KV memory means you can't fit many sequences at once, which means low concurrency,
+      which means the H100's compute sits underfed.
+    </p>
+
+    <h2>What vLLM actually changes</h2>
+    <p>
+      It's tempting to credit the speedup to a faster attention kernel. That's not the main story;
+      HuggingFace can use FlashAttention-2 too. The real win is the <strong>serving engine</strong>,
+      and two ideas in particular:
+    </p>
+    <p>
+      <strong>PagedAttention.</strong> Borrowing the operating-system trick of virtual memory, vLLM
+      stores the KV cache in fixed-size <em>pages</em> instead of one contiguous block per request.
+      A sequence's KV can live in scattered pages, allocated on demand as it grows. Fragmentation
+      collapses to near zero, so you can pack far more sequences into the same 90&nbsp;GB.
+    </p>
+    <p>
+      <strong>Continuous batching.</strong> Instead of waiting for a whole batch to finish, the
+      scheduler works at the granularity of a single decode step. The moment one sequence emits its
+      end token, its slot is freed and a queued request takes its place on the very next step. The
+      GPU stays saturated. This is the lever that turns "more concurrency is possible" into "more
+      concurrency actually happens."
+    </p>
+    <p>
+      Put together: pages let you hold many sequences; continuous batching keeps all of them busy.
+      That is the order of magnitude, not the attention kernel.
+    </p>
+
+    <h2>The numbers</h2>
+    <p>
+      For the production run, on the same H100 and the same model, the practical throughput looked
+      like this:
+    </p>
+    <table>
+      <thead>
+        <tr><th>Setup</th><th>Relative throughput</th><th>Full-run ETA</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>HF <code>.generate()</code>, static batches</td><td class="num">1×</td><td class="num">&gt; 24 h</td></tr>
+        <tr><td>vLLM, continuous batching</td><td class="num">~10×</td><td class="num">a few hours</td></tr>
+      </tbody>
+    </table>
+    <p>
+      I'm deliberately reporting this as an order of magnitude rather than a polished benchmark
+      table: these are real production numbers from one workload, one model, one GPU, not a
+      controlled three-way shootout. The point isn't the exact multiplier; it's that the difference
+      was the gap between "kick it off and check tomorrow" and "watch it finish over lunch."
+    </p>
+
+    <h2>The gotchas nobody warns you about</h2>
+    <p>
+      None of the above is why I'm writing this. This is. Each of these cost me real time, and none
+      of them are in the quickstart.
+    </p>
+
+    <h3>1. A new CUDA can silently break the sampler</h3>
+    <p>
+      On a freshly set-up box with a very recent CUDA toolkit, vLLM tried to JIT-compile its
+      FlashInfer sampling kernels and failed with opaque build errors, not a clean "unsupported"
+      message. The fix was to disable the FlashInfer sampler so vLLM falls back to its default
+      sampling path, set <em>before</em> vLLM is imported:
+    </p>
+    <pre><code><span class="tok-kw">import</span> os
+os.environ.<span class="tok-fn">setdefault</span>(<span class="tok-str">"VLLM_USE_FLASHINFER_SAMPLER"</span>, <span class="tok-str">"0"</span>)
+
+<span class="tok-kw">from</span> vllm <span class="tok-kw">import</span> LLM, SamplingParams   <span class="tok-com"># read at import time, so set it BEFORE importing vllm</span></code></pre>
+    <p>
+      The ordering matters: it is read at import time, so setting it after <code>import
+      vllm</code> does nothing. If you're on bleeding-edge CUDA and seeing kernel-compilation
+      failures, try this before you start bisecting driver versions.
+    </p>
+
+    <h3>2. <code>gpu_memory_utilization</code> is a fraction of <em>total</em>, not free</h3>
+    <p>
+      This one bit me specifically because the GPU was shared. The flag reads like "use up to 85% of
+      what's available," and on an empty GPU that's effectively true. It is not what it means. vLLM
+      treats it as a fraction of <strong>total</strong> device memory, and pre-allocates that much
+      for weights plus KV pages up front.
+    </p>
+    <div class="callout">
+      If other researchers are already using ~26&nbsp;GB of a 90&nbsp;GB card and you ask for
+      <code>gpu_memory_utilization=0.85</code>, you are asking for ~77&nbsp;GB out of the 64&nbsp;GB
+      that's actually free. You get an OOM at <em>load</em> time, not at peak, which is confusing
+      until you realize the number was never about free memory.
+    </div>
+    <p>
+      On a shared card, compute your fraction against the <em>total</em> and leave the others
+      headroom: if they hold 26&nbsp;GB, your ceiling is roughly <code>(90 - 26 - slack) / 90 &asymp;
+      0.65</code>, not 0.85. Check <code>nvidia-smi</code> first, every time.
+    </p>
+
+    <h3>3. Know whether you're prefill-bound or decode-bound</h3>
+    <p>
+      The generation pass and the judging pass had very different shapes, and it changed which knobs
+      mattered.
+    </p>
+    <ul>
+      <li>
+        <strong>Generation</strong>: short prompts, longer outputs. This is <em>decode-bound</em>:
+        the cost is dominated by producing many tokens, where continuous batching and high
+        concurrency pay off most.
+      </li>
+      <li>
+        <strong>Judging</strong>: I fed a whole transcript plus a batch of items as context and
+        asked for a short verdict. That's <em>prefill-bound</em>: almost all the work is the single
+        forward pass over a huge input prompt, and the output is tiny. Cranking concurrency barely
+        helped, because each request was already a large chunk of compute on its own. What mattered
+        there was prompt length and batching items per prompt, not stacking more concurrent
+        requests.
+      </li>
+    </ul>
+    <p>
+      If you turn the usual concurrency dials and throughput doesn't move, you're probably
+      prefill-bound, and the fix is on the input side (shorter context, more items per prompt), not
+      the scheduling side.
+    </p>
+
+    <h3>4. The <code>max_model_len</code> cliff</h3>
+    <p>
+      I capped transcripts at a character budget I'd eyeballed as "about 16k tokens" and set
+      <code>max_model_len=16384</code>. Then a run died with something like <code>16385 &gt;
+      16384</code>. Tokenizers don't care about your character estimate; one transcript tokenized
+      just over the line and the whole request was rejected. Two lessons: leave a real margin (I
+      moved to <code>32768</code>), and remember that <code>max_model_len</code> is a hard wall:
+      crossing it by a single token fails the request, it doesn't truncate it.
+    </p>
+
+    <h3>5. Prefix caching only helps if the shared text comes first</h3>
+    <p>
+      vLLM can cache the KV for a shared prompt prefix across requests, which is great when every
+      prompt starts with the same long system instructions. My first prompt layout put the <em>variable</em>
+      content (the transcript) before the static instructions, so there was no shared prefix to
+      cache and the feature did nothing. Reordering so the constant block leads makes the cache
+      actually reusable. If you want prefix caching, design your template front-loaded with whatever
+      is constant.
+    </p>
+
+    <h2>Takeaways</h2>
+    <ul>
+      <li>
+        For any batch/offline generation past a few thousand items, reach for vLLM (or another
+        paged-KV serving engine) before you optimize a <code>.generate()</code> loop. The win is
+        continuous batching plus paged memory, not a faster kernel.
+      </li>
+      <li>
+        On a shared GPU, <code>gpu_memory_utilization</code> is your single most dangerous flag.
+        It's a fraction of total memory. Read <code>nvidia-smi</code> first.
+      </li>
+      <li>
+        Figure out if your workload is prefill- or decode-bound before you tune anything. They
+        reward opposite knobs.
+      </li>
+      <li>
+        Bleeding-edge CUDA and vLLM's JIT kernels don't always agree. Knowing the one env var above
+        saves an afternoon.
+      </li>
+    </ul>
+
+    <hr>
+    <p style="color:var(--muted); font-size:15.5px;">
+      This work was done during my research internship at IIT Kharagpur under Prof. Koustav Rudra.
+      The post is about the inference infrastructure only; the dataset and its research findings are
+      separate work and not discussed here.
+    </p>
+  </article>
+
+  <footer>
+    &copy; 2026 Hitesh Kumar Gupta · <a href="/blog/" target="_self">Blog</a> · <a href="/" target="_self">Home</a>
+  </footer>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-MDT4B1L3TP"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-MDT4B1L3TP');
+  </script>
+
+</body>
+
+</html>
