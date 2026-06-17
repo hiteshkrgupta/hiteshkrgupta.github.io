@@ -67,12 +67,24 @@
       font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
       color: var(--ink);
       line-height: 1.65;
-      max-width: 720px;
-      margin: 60px auto;
-      padding: 0 24px;
       font-size: 17px;
+      margin: 0;
       -webkit-font-smoothing: antialiased;
       text-rendering: optimizeLegibility;
+    }
+
+    .page-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 36px;
+      padding: 60px 24px;
+    }
+
+    .main-col {
+      max-width: 720px;
+      width: 100%;
+      min-width: 0;
     }
 
     a {
@@ -221,9 +233,85 @@
       padding-top: 16px;
     }
 
+    /* Recommendation cards */
+    .rec-mark {
+      font-family: Georgia, serif;
+      font-size: 52px;
+      line-height: 0.85;
+      color: var(--accent);
+      opacity: 0.25;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .rec-quote {
+      font-style: italic;
+      margin: 0 0 13px;
+    }
+
+    .rec-attr {
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* Desktop: sticky sidecards */
+    .rec-side {
+      display: none;
+    }
+
+    /* Mobile: inline section */
+    .rec-inline {
+      display: block;
+    }
+
+    .rec-card {
+      background: #fff;
+      border-top: 3px solid var(--accent);
+      border-radius: 8px;
+      box-shadow: 0 3px 16px rgba(0, 0, 0, 0.09);
+      padding: 16px 18px 18px;
+      margin-bottom: 16px;
+      font-size: 15px;
+    }
+
+    .rec-card .rec-attr {
+      font-size: 13px;
+    }
+
+    @media (min-width: 1240px) {
+      .rec-inline {
+        display: none;
+      }
+
+      .rec-side {
+        display: block;
+        width: 280px;
+        flex: none;
+        background: #fff;
+        border-top: 3px solid var(--accent);
+        border-radius: 8px;
+        padding: 16px 18px 18px;
+        box-shadow: 0 4px 22px rgba(0, 0, 0, 0.10);
+        font-size: 13.5px;
+        line-height: 1.6;
+      }
+
+      .rec-side .rec-mark {
+        font-size: 46px;
+      }
+
+      .rec-side .rec-quote {
+        margin: 0 0 12px;
+      }
+
+      .rec-side .rec-attr {
+        font-size: 12px;
+      }
+    }
+
     @media (max-width: 540px) {
-      body {
-        margin: 40px auto;
+      .page-wrap {
+        padding: 40px 24px;
       }
 
       header {
@@ -262,130 +350,185 @@
 
 <body>
 
-  <header>
-    <img class="photo" src="photo.jpeg" alt="Hitesh Kumar Gupta" onerror="this.style.display='none'">
-    <div>
-      <h1>Hitesh Kumar Gupta</h1>
-      <p class="affil">R&amp;D Intern, Department of Artificial Intelligence<br>
-        Indian Institute of Technology Kharagpur (IIT Kharagpur)</p>
-      <p class="contact">
-        <a href="mailto:hiteshagarwal172@gmail.com">Email</a><span class="sep">·</span>
-        <a href="https://scholar.google.com/citations?user=6na0WF0AAAAJ">Google Scholar</a><span class="sep">·</span>
-        <a href="https://www.semanticscholar.org/author/Hitesh-Kumar-Gupta/2004276626">Semantic&nbsp;Scholar</a><span
-          class="sep">·</span>
-        <a href="https://orcid.org/0009-0000-0040-0651">ORCID</a><span class="sep">·</span>
-        <a href="https://github.com/ihiteshagrawal">GitHub</a><span class="sep">·</span>
-        <a href="https://linkedin.com/in/ihiteshagrawal">LinkedIn</a><span class="sep">·</span>
-        <a href="blog/" target="_self">Blog</a><span class="sep">·</span>
-        <a href="cv.pdf">CV</a>
-      </p>
+  <div class="page-wrap">
+
+    <aside class="rec-side">
+      <span class="rec-mark">"</span>
+      <p class="rec-quote">Hitesh is one of the best developers, thinkers, and problem solvers, and would be <b>an asset
+          to
+          any team he works with</b>. We worked together at VaporFi, and he was always keen to <b>solve problems outside
+          of his
+          domain and attentive to detail </b>. He is a great person to work with.</p>
+      <p class="rec-attr"><strong>Parth Patel</strong><br>Senior Engineer, Yieldnest<br>prev. AAVE, Amazon</p>
+    </aside>
+
+    <div class="main-col">
+
+      <header>
+        <img class="photo" src="photo.jpeg" alt="Hitesh Kumar Gupta" onerror="this.style.display='none'">
+        <div>
+          <h1>Hitesh Kumar Gupta</h1>
+          <p class="affil">R&amp;D Intern, Department of Artificial Intelligence<br>
+            Indian Institute of Technology Kharagpur (IIT Kharagpur)</p>
+          <p class="contact">
+            <a href="mailto:hiteshagarwal172@gmail.com">Email</a><span class="sep">·</span>
+            <a href="https://scholar.google.com/citations?user=6na0WF0AAAAJ">Google Scholar</a><span
+              class="sep">·</span>
+            <a
+              href="https://www.semanticscholar.org/author/Hitesh-Kumar-Gupta/2004276626">Semantic&nbsp;Scholar</a><span
+              class="sep">·</span>
+            <a href="https://orcid.org/0009-0000-0040-0651">ORCID</a><span class="sep">·</span>
+            <a href="https://github.com/ihiteshagrawal">GitHub</a><span class="sep">·</span>
+            <a href="https://linkedin.com/in/ihiteshagrawal">LinkedIn</a><span class="sep">·</span>
+            <a href="blog/" target="_self">Blog</a><span class="sep">·</span>
+            <a href="cv.pdf">CV</a>
+          </p>
+        </div>
+      </header>
+
+      <section class="lead">
+        <p>
+          I am an R&amp;D Intern in the Department of Artificial Intelligence at the Indian Institute of
+          Technology Kharagpur, working with <b><a href="https://sites.google.com/view/krudra5/home">Prof. Koustav
+              Rudra</a></b>. I coordinate the cryptocurrency information retrieval track that IIT Kharagpur is
+          organising at the <b>Forum for Information Retrieval Evaluation</b>
+          (<a href="https://fire.irsi.org.in/fire/2026/">FIRE 2026</a>).
+        </p>
+        <p>
+          Previously, I was an R&amp;D Project Intern in the Department of Computer Science and
+          Engineering at the <b>Indian Institute of Technology (ISM) Dhanbad</b>, working with
+          <b><a href="https://www.iitism.ac.in/faculty-details?faculty=sachin2781">Prof. Sachin
+              Tripathi</a></b>, and before that an intern in the Department of CSE at
+          <b>Birsa Institute of Technology, Sindri</b>, working with <b>Prof. Khustar Ansari</b>.
+        </p>
+
+        <p>
+          I am largely self-taught. I started programming on a smartphone at 13, building chatbots for
+          companies while in school, shipped a full-stack application from my phone at 17, and
+          independently published my first research paper at 20, now cited across IEEE, IOP Science, and
+          NCIT venues.
+        </p>
+        <p>
+          I am a third-year
+          B.Tech (Computer Science) student, <b>open to research opportunities.</b>
+        </p>
+      </section>
+
+      <section>
+        <h2>Research Interests</h2>
+        <p>Responsible AI &nbsp;·&nbsp; Computer Vision
+          &nbsp;·&nbsp; Natural Language Processing.</p>
+      </section>
+
+      <section class="pub">
+        <h2>Publications</h2>
+        <p>
+          <span class="title">When Better Eyes Lead to Blindness: A Diagnostic Study of the Information
+            Bottleneck in CNN-LSTM Image Captioning Models.</span><br>
+          Hitesh Kumar Gupta. <i>International Journal of Computer Applications</i>, 2025.
+          <a
+            href="https://ijca.phdfocus.com/archives/volume187/issue31/when-better-eyes-lead-to-blindness-a-diagnostic-study-of-the-information-bottleneck-in-cnn-lstm-image-captioning-models/">paper</a>
+          <span class="sep">·</span>
+          <a href="https://doi.org/10.5120/ijca2025925560">doi:10.5120/ijca2025925560</a><br>
+        </p>
+      </section>
+
+      <section>
+        <h2>Blog</h2>
+        <p>
+          <a href="blog/vllm-vs-huggingface/" target="_self">Escaping the KV-Cache Bottleneck: vLLM vs
+            HuggingFace Transformers on an H100</a>: engineering notes on running ~100k LLM
+          generations on a shared H100, and the gotchas in between.
+          <span class="sep">·</span> <a href="blog/" target="_self">All posts</a>
+        </p>
+      </section>
+
+      <section>
+        <h2>Experience</h2>
+        <ul class="exp">
+          <li>
+            <div class="head"><span><b>R&amp;D Intern</b>, IIT Kharagpur</span><span class="date">May 2026 &ndash;
+                present</span></div>
+            <div class="where">Department of Artificial Intelligence, with <a
+                href="https://sites.google.com/view/krudra5/home">Prof. Koustav Rudra</a></div>
+          </li>
+          <li>
+            <div class="head"><span><b>R&amp;D Project Intern</b>, IIT (ISM) Dhanbad</span><span class="date">Feb
+                &ndash;
+                Apr 2026</span></div>
+            <div class="where">Department of CSE, with <a
+                href="https://www.iitism.ac.in/faculty-details?faculty=sachin2781">Prof. Sachin Tripathi</a></div>
+          </li>
+          <li>
+            <div class="head"><span><b>Deep Learning Intern</b>, Birsa Institute of Technology, Sindri</span><span
+                class="date">Jun &ndash; Jul 2025</span></div>
+          </li>
+          <li>
+            <div class="head"><span><b>Software Engineer</b> (part-time), VaporFi Labs</span><span class="date">2022
+                &ndash;
+                2026</span></div>
+            <div class="where">US-based fintech and Web3</div>
+          </li>
+        </ul>
+      </section>
+
+      <section class="rec-inline">
+        <h2>Recommendations</h2>
+        <div class="rec-card">
+          <span class="rec-mark">"</span>
+          <p class="rec-quote">Hitesh is one of the best developers, thinkers, and problem solvers, and would be an
+            asset to any team he works with. We worked together at VaporFi, and he was always keen to solve problems
+            outside of his domain and attentive to detail. He is a great person to work with.</p>
+          <p class="rec-attr"><strong>Parth Patel</strong> &mdash; Senior Engineer, Yieldnest (prev. AAVE, Amazon)</p>
+        </div>
+        <div class="rec-card">
+          <span class="rec-mark">"</span>
+          <p class="rec-quote">His attention to detail stands out immediately. He catches issues most engineers miss,
+            both in code and in design reviews. He also picks up unfamiliar systems faster than anyone I've worked with,
+            which makes him reliable when thrown into new territory. Where he really shines is system design and
+            execution. He thinks through edge cases up front, makes pragmatic tradeoffs, and follows through. The
+            features he ships are stable, well-scoped, and rarely come back with regressions. Any team would be lucky to
+            have him.</p>
+          <p class="rec-attr"><strong>Gaurav U</strong> &mdash; Software Engineer, Mercor</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>Education</h2>
+        <p>B.Tech in Computer Science &amp; Engineering, K. K. College of Engineering &amp; Management,
+          Dhanbad. CGPA 8.5/10, first rank in programme. Expected 2027.</p>
+      </section>
+
+      <section>
+        <h2>Awards &amp; Service</h2>
+        <ul>
+          <li>Coordinator, cryptocurrency information retrieval track (organised by IIT Kharagpur),
+            <a href="https://fire.irsi.org.in/fire/2026/">FIRE 2026</a>.
+          </li>
+          <li>arXiv Endorsement (cs.CV, cs.LG), obtained independently without institutional affiliation.</li>
+          <li>Hindustan Talent Honour, 2023.</li>
+        </ul>
+      </section>
+
+      <footer>
+        &copy; 2026 Hitesh Kumar Gupta
+      </footer>
+
     </div>
-  </header>
 
-  <section class="lead">
-    <p>
-      I am an R&amp;D Intern in the Department of Artificial Intelligence at the Indian Institute of
-      Technology Kharagpur, working with <b><a href="https://sites.google.com/view/krudra5/home">Prof. Koustav
-          Rudra</a></b>. I coordinate the cryptocurrency information retrieval track that IIT Kharagpur is
-      organising at the <b>Forum for Information Retrieval Evaluation</b>
-      (<a href="https://fire.irsi.org.in/fire/2026/">FIRE 2026</a>).
-    </p>
-    <p>
-      Previously, I was an R&amp;D Project Intern in the Department of Computer Science and
-      Engineering at the <b>Indian Institute of Technology (ISM) Dhanbad</b>, working with
-      <b><a href="https://www.iitism.ac.in/faculty-details?faculty=sachin2781">Prof. Sachin
-      Tripathi</a></b>, and before that an intern in the Department of CSE at
-      <b>Birsa Institute of Technology, Sindri</b>, working with <b>Prof. Khustar Ansari</b>.
-    </p>
+    <aside class="rec-side">
+      <span class="rec-mark">"</span>
+      <p class="rec-quote">His attention to detail stands out immediately. He catches issues most engineers miss, both
+        in code and in design reviews. He also <b>picks up unfamiliar systems faster than anyone I've worked with</b>,
+        which
+        makes him reliable when thrown into new territory. Where <b>he really shines is system design and execution</b>.
+        He
+        thinks through edge cases up front, makes pragmatic tradeoffs, and follows through. The <b>features he ships are
+          stable, well-scoped, and rarely come back with regressions</b>. Any team would be lucky to have him.</p>
+      <p class="rec-attr"><strong>Gaurav U</strong><br>Software Engineer, Mercor</p>
+    </aside>
 
-    <p>
-      I am largely self-taught. I started programming on a smartphone at 13, building chatbots for
-      companies while in school, shipped a full-stack application from my phone at 17, and
-      independently published my first research paper at 20, now cited across IEEE, IOP Science, and
-      NCIT venues.
-    </p>
-    <p>
-      I am a third-year
-      B.Tech (Computer Science) student, <b>open to research opportunities.</b>
-    </p>
-  </section>
-
-  <section>
-    <h2>Research Interests</h2>
-    <p>Responsible AI &nbsp;·&nbsp; Computer Vision
-      &nbsp;·&nbsp; Natural Language Processing.</p>
-  </section>
-
-  <section class="pub">
-    <h2>Publications</h2>
-    <p>
-      <span class="title">When Better Eyes Lead to Blindness: A Diagnostic Study of the Information
-        Bottleneck in CNN-LSTM Image Captioning Models.</span><br>
-      Hitesh Kumar Gupta. <i>International Journal of Computer Applications</i>, 2025.
-      <a
-        href="https://ijca.phdfocus.com/archives/volume187/issue31/when-better-eyes-lead-to-blindness-a-diagnostic-study-of-the-information-bottleneck-in-cnn-lstm-image-captioning-models/">paper</a>
-      <span class="sep">·</span>
-      <a href="https://doi.org/10.5120/ijca2025925560">doi:10.5120/ijca2025925560</a><br>
-    </p>
-  </section>
-
-  <section>
-    <h2>Blog</h2>
-    <p>
-      <a href="blog/vllm-vs-huggingface/" target="_self">Escaping the KV-Cache Bottleneck: vLLM vs
-        HuggingFace Transformers on an H100</a>: engineering notes on running ~100k LLM
-      generations on a shared H100, and the gotchas in between.
-      <span class="sep">·</span> <a href="blog/" target="_self">All posts</a>
-    </p>
-  </section>
-
-  <section>
-    <h2>Experience</h2>
-    <ul class="exp">
-      <li>
-        <div class="head"><span><b>R&amp;D Intern</b>, IIT Kharagpur</span><span class="date">May 2026 &ndash;
-            present</span></div>
-        <div class="where">Department of Artificial Intelligence, with <a
-            href="https://sites.google.com/view/krudra5/home">Prof. Koustav Rudra</a></div>
-      </li>
-      <li>
-        <div class="head"><span><b>R&amp;D Project Intern</b>, IIT (ISM) Dhanbad</span><span class="date">Feb &ndash;
-            Apr 2026</span></div>
-        <div class="where">Department of CSE, with <a
-            href="https://www.iitism.ac.in/faculty-details?faculty=sachin2781">Prof. Sachin Tripathi</a></div>
-      </li>
-      <li>
-        <div class="head"><span><b>Deep Learning Intern</b>, Birsa Institute of Technology, Sindri</span><span
-            class="date">Jun &ndash; Jul 2025</span></div>
-      </li>
-      <li>
-        <div class="head"><span><b>Software Engineer</b> (part-time), VaporFi Labs</span><span class="date">2022 &ndash;
-            2026</span></div>
-        <div class="where">US-based fintech and Web3</div>
-      </li>
-    </ul>
-  </section>
-
-  <section>
-    <h2>Education</h2>
-    <p>B.Tech in Computer Science &amp; Engineering, K. K. College of Engineering &amp; Management,
-      Dhanbad. CGPA 8.5/10, first rank in programme. Expected 2027.</p>
-  </section>
-
-  <section>
-    <h2>Awards &amp; Service</h2>
-    <ul>
-      <li>Coordinator, cryptocurrency information retrieval track (organised by IIT Kharagpur),
-        <a href="https://fire.irsi.org.in/fire/2026/">FIRE 2026</a>.
-      </li>
-      <li>arXiv Endorsement (cs.CV, cs.LG), obtained independently without institutional affiliation.</li>
-      <li>Hindustan Talent Honour, 2023.</li>
-    </ul>
-  </section>
-
-  <footer>
-    &copy; 2026 Hitesh Kumar Gupta
-  </footer>
+  </div>
 
 </body>
 
